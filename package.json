@@ -1,0 +1,37 @@
+{
+    "name": "passportauthentication",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "scripts": {
+        "watch": "webpack -w",
+        "build": "npm run watch-deploy",
+        "watch-deploy": "nodemon dist/main.js"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "bcrypt": "^5.0.1",
+        "config": "^3.3.6",
+        "dotenv": "^10.0.0",
+        "ejs": "^3.1.6",
+        "express": "^4.17.1",
+        "express-flash": "^0.0.2",
+        "express-session": "^1.17.2",
+        "method-override": "^3.0.0",
+        "mongoose": "^5.5.7",
+        "nodemon": "^2.0.14",
+        "passport": "^0.5.0",
+        "passport-local": "^1.0.0",
+        "ts-loader": "^9.2.6",
+        "webpack-dev-server": "^4.4.0"
+    },
+    "devDependencies": {
+        "@types/bcrypt": "^5.0.0",
+        "@types/express": "^4.17.13",
+        "@types/mongoose": "^5.5.0",
+        "@types/passport-local": "^1.0.34",
+        "webpack-cli": "^4.9.1",
+        "webpack-node-externals": "^3.0.0"
+    }
+}
