@@ -2,20 +2,32 @@ import express, { Request, Response, NextFunction } from "express";
 import connectDB from "../config/dbconnection";
 import bcrypt from "bcrypt";
 import passport from "passport";
-import User, { IUser } from "./models/user";
+import User,{ IUser } from "./models/user";
 const initialize = require("./passport-config");
 const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
+const cors = require('cors');
+const cookieSession = require('cookie-session');
 const app = express();
 require('dotenv').config();
-const users: any = [];
+require('./googleauth/passport-config');
+require('./githubauth/passport-config');
 
 initialize(passport);
 
 connectDB();
 
 app.set('view-engine', 'ejs');
+app.use(cookieSession({
+    name: 'session',
+    keys: ['key1'],
+    maxAge: 24 * 60 * 60 * 1000
+}));
+
+app.use(cors());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(session({
@@ -24,11 +36,16 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(methodOverride('_method'));
+const isloggedIn = (req: Request, res: Response, next: NextFunction) => {
+    if (req.user) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
 
-app.get('/', checkAuthenticated, (req, res) => {
+app.get('/', isloggedIn, checkAuthenticated, (req, res) => {
     res.render('index.ejs', { name: "vishal" });
 });
 
@@ -62,10 +79,31 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     }
 });
 
-app.delete('/logout',(req,res) => {
+app.delete('/logout', (req, res) => {
+    req.session = null;
+    res.cookie('connect.sid', '', { expires: new Date(1), path: '/' });
     req.logOut();
+    res.clearCookie('connect.sid', { path: '/' });
     res.redirect('/login');
-})
+});
+
+//google auth
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function (req, res) {
+        res.redirect('/');
+    });
+
+//github auth
+app.get('/auth/github', passport.authenticate('github'));
+
+app.get('/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    function (req, res) {
+        res.redirect('/');
+    });
 
 function checkAuthenticated(req: Request, res: Response, next: NextFunction) {
     if (req.isAuthenticated()) {
@@ -83,6 +121,7 @@ function checkNotAuthenticated(req: Request, res: Response, next: NextFunction) 
     }
 }
 
-app.listen(3000, () => {
-    console.log("server started on port 3000");
-})
+app.listen(process.env.PORT, () => {
+    console.log(`server started on port ${process.env.PORT}`);
+    //lsof -i ${3000} -t | xargs kill
+});
