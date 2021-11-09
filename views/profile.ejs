@@ -1,0 +1,25 @@
+<%- include("header") -%>
+    <% if (messages.error) { %>
+        <%= messages.error %>
+            <% } %>
+                <div class="text-center center-div" id="login">
+                    <div class="container w-25 mt-4 border py-5">
+                        <div class="title pb-5">
+                            <h2 class="font-weight-bold">Welcome</h2>
+                            <a href="/" class="btn btn-primary rounded-pill">Dashboard</a>&nbsp;
+                            <a href="/profile" class="btn btn-primary rounded-pill">Profile</a>
+                        </div>
+                        <form action="/update" method="POST"><br>
+                            <div class="form-group">
+                                <input type="name" value="<%= user.name %>" class="form-control" placeholder="name" id="name" name="name" required />
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <input type="email" value="<%= user.email %>" class="form-control" placeholder="email" id="email" name="email" required />
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-success rounded-pill">Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+                <%- include("footer") -%>

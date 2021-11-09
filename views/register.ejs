@@ -1,24 +1,34 @@
-<h1>Register</h1>
-<% if (messages.error) { %>
-    <%= messages.error %>
-        <% } %>
-            <form action="/register" method="POST">
-                <div>
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" required>
+<%- include("header") -%>
+    <% if (messages.error) { %>
+        <%= messages.error %>
+            <% } %>
+                <div class="text-center center-div" id="register">
+                    <div class="container w-25 mt-4 border py-5">
+                        <div class="title pb-5">
+                            <h2 class="font-weight-bold">Register System</h2>
+                            <span>Register New User</span>
+                        </div>
+                        <form action="/register" method="POST"><br>
+                            <div class="form-group">
+                                <input type="name" class="form-control" placeholder="name" id="name" name="name" required />
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="email" id="email" name="email" required />
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="password" id="password" name="password" />
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-success rounded-pill">Sign Up</button>
+                            <br>
+                            <br>
+                            <a href="/login" class="btn btn-warning rounded-pill">already Register?</a>
+                            <br><br>
+                            <a href="/auth/google" class="btn btn-primary rounded-pill">sign up with google</a>&nbsp;&nbsp;
+                            <a href="/auth/github" class="btn btn-primary rounded-pill">sign up with github</a>
+                        </form>
+                    </div>
                 </div>
-                <div>
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password">
-                </div>
-                <button type="submit">Register</button>
-            </form>
-            <a href="/login">Login</a>
-            <br><br>
-            <a href="/auth/google">sign up with google</a>
-            <br><br>
-            <a href="/auth/github">sign up with github</a>
+                <%- include("footer") -%>

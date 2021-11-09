@@ -1,6 +1,17 @@
-<h1>Hi
-    <%= name %>
-</h1>
-<form method="POST" action="/logout?_method=DELETE">
-    <button type="submit">Logout</button>
-</form>
+<%- include("header") -%>
+    <% if (messages.error) { %>
+        <%= messages.error %>
+            <% } %>
+                <div class="text-center center-div" id="login">
+                    <div class="container w-25 mt-4 border py-5">
+                        <div class="title pb-5">
+                            <h2 class="font-weight-bold">Welcome</h2>
+                            <a href="/" class="btn btn-primary rounded-pill">Dashboard</a>&nbsp;
+                            <a href="/profile" class="btn btn-primary rounded-pill">Profile</a>
+                        </div>
+                        <form method="POST" action="/logout?_method=DELETE">
+                            <button type="submit">Logout</button>
+                        </form>
+                    </div>
+                </div>
+                <%- include("footer") -%>

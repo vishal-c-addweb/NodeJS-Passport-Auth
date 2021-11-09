@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import connectDB from "../config/dbconnection";
 import bcrypt from "bcrypt";
 import passport from "passport";
-import User,{ IUser } from "./models/user";
+import User, { IUser } from "./models/user";
 const initialize = require("./passport-config");
 const flash = require('express-flash');
 const session = require('express-session');
@@ -10,6 +10,7 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const cookieSession = require('cookie-session');
 const app = express();
+const path = require('path');
 require('dotenv').config();
 require('./googleauth/passport-config');
 require('./githubauth/passport-config');
@@ -19,6 +20,7 @@ initialize(passport);
 connectDB();
 
 app.set('view-engine', 'ejs');
+app.set('view-engine', 'pug');
 app.use(cookieSession({
     name: 'session',
     keys: ['key1'],
@@ -46,7 +48,7 @@ const isloggedIn = (req: Request, res: Response, next: NextFunction) => {
 }
 
 app.get('/', isloggedIn, checkAuthenticated, (req, res) => {
-    res.render('index.ejs', { name: "vishal" });
+    res.render('index.ejs');
 });
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
@@ -77,6 +79,31 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         console.log(error);
         res.redirect('/register');
     }
+});
+
+app.get('/profile', isloggedIn, checkAuthenticated, (req, res) => {
+    res.render('profile.ejs', { user: req.user });
+});
+
+app.post('/update', isloggedIn, checkAuthenticated, async (req, res) => {
+    try {
+        await User.findByIdAndUpdate(req.user,
+            {
+                $set: {
+                    name: req.body.name,
+                    email: req.body.email
+                }
+            });
+        let user = await User.findOne({"name":req.body.name}); 
+        res.render('profile.ejs', { user: user });
+    } catch (error) {
+        console.log(error);
+        res.redirect('/profile');
+    }
+});
+
+app.get('/my', (req, res) => {
+    res.render('my.pug');
 });
 
 app.delete('/logout', (req, res) => {
@@ -115,7 +142,7 @@ function checkAuthenticated(req: Request, res: Response, next: NextFunction) {
 
 function checkNotAuthenticated(req: Request, res: Response, next: NextFunction) {
     if (req.isAuthenticated()) {
-        res.redirect('/');
+        res.redirect('back');
     } else {
         next();
     }
